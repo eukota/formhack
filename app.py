@@ -4,11 +4,14 @@ from transformers import SiglipForImageClassification
 from transformers.image_utils import load_image
 from PIL import Image
 import torch
+from agent import run_image_reasoning_pipeline
 
 # Load model and processor
 model_name = "prithivMLmods/Gym-Workout-Classifier-SigLIP2"
 model = SiglipForImageClassification.from_pretrained(model_name)
 processor = AutoImageProcessor.from_pretrained(model_name)
+
+state = ''
 
 def workout_classification(image):
     """Predicts workout exercise classification for an image."""
@@ -28,8 +31,8 @@ def workout_classification(image):
         "16": "russian twist", "17": "shoulder press", "18": "squat", "19": "t bar row",
         "20": "tricep dips", "21": "tricep pushdown"
     }
-    predictions = {labels[str(i)]: round(probs[i], 3) for i in range(len(probs))}
-    
+    predictions = {labels[str(i)]: round(probs[i], 3) for i in range(1)}
+    state = predictions
     return predictions
 
 # Create Gradio interface
@@ -46,3 +49,17 @@ iface = gr.Interface(
 if __name__ == "__main__":
     print(gr.__version__)
     iface.launch(server_name="0.0.0.0", server_port=7860)
+    # Load UI
+    image_digest = next(iter(state))
+    print(image_digest)
+    # Run Langgraph React Workflow to get User Improvements
+    recommendation = run_image_reasoning_pipeline('./', image_digest)
+    print(recommendation)
+    # Update the interface with the recommendation
+    gr.Interface(
+        fn=workout_classification,
+        inputs=gr.Image(sources=["upload","webcam","clipboard"],type="numpy"),
+        outputs=gr.Label(label="Recommendation"),
+        title="Workout Improvement Recommendation",
+        description=recommendation
+    ).launch(server_name="0.0.0.0", server_port=7860)

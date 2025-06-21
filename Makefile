@@ -57,4 +57,4 @@ make docker-build-small:
 	docker build -t $(IMAGE_NAME)-small -f Dockerfile.small .
 
 make docker-run-small:
-	docker run -it --rm -p 7860:7860 -v $(PWD):/app $(IMAGE_NAME)-small
+	docker run -it --rm -p 7850:7860 -v /home/prodev/devtime/dayhack/formhack:/app $(IMAGE_NAME)-small
