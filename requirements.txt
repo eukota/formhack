@@ -1,0 +1,9 @@
+streamlit
+opencv-python
+mediapipe
+numpy
+Pillow
+gradio
+transformers
+PIL
+torch
