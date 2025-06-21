@@ -21,13 +21,22 @@ RUN apt-get update && apt-get install -y \
     && apt-get install -y nodejs \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install JupyterLab and Python tools
+# Create working dir
+WORKDIR /app
+
+# Copy requirements.txt into the image
+COPY requirements.txt .
+
+RUN pip install --no-cache-dir --upgrade pip setuptools wheel \
+ && pip install --prefer-binary numpy \
+ && pip install --no-cache-dir -r requirements.txt
+
+# Install JupyterLab
 RUN pip install --no-cache-dir \
     jupyterlab \
     notebook \
     ipykernel \
     pandas \
-    numpy \
     matplotlib \
     seaborn \
     requests
@@ -38,8 +47,13 @@ RUN npm install -g n8n
 # Expose both ports
 EXPOSE ${N8N_PORT} ${JUPYTER_PORT}
 
-# Create working dir
-WORKDIR /app
+# Copy App in
+RUN mkdir -p /app
+COPY app.py /app/app.py
+
+# Create a mountable notebooks directory
+RUN mkdir -p /app/notebooks
+
 
 # Startup command: run both n8n and JupyterLab
-CMD bash -c "n8n & jupyter lab --ip=0.0.0.0 --port=${JUPYTER_PORT} --no-browser --allow-root --NotebookApp.token=''"
+CMD bash -c "n8n & jupyter lab --ip=0.0.0.0 --notebook-dir=/app/notebooks --port=${JUPYTER_PORT} --no-browser --allow-root --NotebookApp.token=''"
