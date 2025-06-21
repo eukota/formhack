@@ -50,3 +50,11 @@ clean:
 	@echo "Stopping and removing container $(CONTAINER_NAME) if it exists..."
 	@docker stop $(CONTAINER_NAME) 2>/dev/null || true
 	@docker rm $(CONTAINER_NAME) 2>/dev/null || true
+
+
+##### SMALL IMAGE #####
+make docker-build-small:
+	docker build -t $(IMAGE_NAME)-small -f Dockerfile.small .
+
+make docker-run-small:
+	docker run -it --rm -p 7860:7860 -v $(PWD):/app $(IMAGE_NAME)-small

@@ -36,6 +36,7 @@ def workout_classification(image):
 iface = gr.Interface(
     fn=workout_classification,
     inputs=gr.Image(sources=["upload","webcam","clipboard"],type="numpy"),
+    # input_video = gr.Video(sources=["webcam"], type="numpy"),
     outputs=gr.Label(label="Prediction Scores"),
     title="Gym Workout Classification",
     description="Upload an image to classify the workout exercise."
