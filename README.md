@@ -63,7 +63,7 @@ The first container tried to use N8N for workflow building while also providing 
 
 **Run**
 
-`make run
+`make run`
 
 **Browse**
 
